@@ -244,13 +244,13 @@ void searchCreatures(Creature **arr, int size)
     }
 
     if (!found)
-        cout << "no matching records found." << endl;
+        cout << "not found" << endl;
 }
 
 int main()
 {
     // load file
-    Creature **army = 0;
+    Creature **army = 0; 
     int size = 0;
 
     loadCreatures("creatures.txt", army, size);
@@ -286,7 +286,7 @@ int main()
             break;
 
         default:
-            cout << "invalid choice." << endl;
+            cout << "invalid choice" << endl;
         }
 
     } while (choice != QUIT_APP);
