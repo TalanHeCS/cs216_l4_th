@@ -5,6 +5,8 @@
 
 using namespace std;
 
+const int MAX_CREATURES = 200; // max size for the fixed array, no new/delete needed
+
 // one creature record
 struct Creature
 {
@@ -12,9 +14,14 @@ struct Creature
     string type;
     int level;
     int strength;
+
+    // lowercase versions of name/type, stored so case doesn't have to be
+    // converted over and over during sorting or searching
+    string nameLower;
+    string typeLower;
 };
 
-// menu choices
+// menu choices for the main menu
 enum MainMenu
 {
     PRINT_LIST = 1,
@@ -23,6 +30,7 @@ enum MainMenu
     QUIT_APP
 };
 
+// menu choices for the sort submenu
 enum SortMenu
 {
     SORT_BY_NAME = 1,
@@ -32,7 +40,9 @@ enum SortMenu
     SORT_BACK
 };
 
-// changes a string to lower case
+// converts a string to lowercase letter by letter
+// note: 'Z' < 'a' in ascii, so comparisons on mixed-case strings
+// would sort incorrectly without this
 string makeLower(string s)
 {
     for (int i = 0; i < (int)s.length(); i++)
@@ -43,7 +53,7 @@ string makeLower(string s)
     return s;
 }
 
-// prints the table header
+// prints the column headers for the table
 void printHeader()
 {
     cout << left << setw(15) << "name";
@@ -54,8 +64,8 @@ void printHeader()
     cout << "--------------------------------------------------------" << endl;
 }
 
-// prints all creatures in the array
-void printCreatures(Creature **arr, int size)
+// loops through the pointer array and prints every creature
+void printCreatures(Creature *arr[], int size)
 {
     if (size == 0)
     {
@@ -74,23 +84,13 @@ void printCreatures(Creature **arr, int size)
     }
 }
 
-// makes a copy of the pointer array
-Creature **copyPointerArray(Creature **arr, int size)
-{
-    Creature **copy = new Creature *[size];
-
-    for (int i = 0; i < size; i++)
-        copy[i] = arr[i];
-
-    return copy;
-}
-
-// loads creatures from a file of unknown length
-void loadCreatures(const string &filename, Creature **&arr, int &size)
+// reads the file line by line into a fixed-size array
+// no new/delete here, so the loop just stops early if the file
+// has more records than MAX_CREATURES can hold
+void loadCreatures(const string &filename, Creature arr[], int &size)
 {
     ifstream fin(filename.c_str());
 
-    arr = 0;
     size = 0;
 
     if (!fin)
@@ -99,76 +99,66 @@ void loadCreatures(const string &filename, Creature **&arr, int &size)
         return;
     }
 
-    int capacity = 10;
-    arr = new Creature *[capacity];
-
     string name, type;
     int level, strength;
 
-    while (fin >> name >> type >> level >> strength)
+    while (size < MAX_CREATURES && (fin >> name >> type >> level >> strength))
     {
-        if (size == capacity)
-        {
-            int newCapacity = capacity * 2;
-            Creature **temp = new Creature *[newCapacity];
+        arr[size].name = name;
+        arr[size].type = type;
+        arr[size].level = level;
+        arr[size].strength = strength;
 
-            for (int i = 0; i < size; i++)
-                temp[i] = arr[i];
+        // computing the lowercase fields once here saves doing it
+        // repeatedly later during sort/search
+        arr[size].nameLower = makeLower(name);
+        arr[size].typeLower = makeLower(type);
 
-            delete[] arr;
-            arr = temp;
-            capacity = newCapacity;
-        }
-
-        arr[size] = new Creature;
-        arr[size]->name = makeLower(name);
-        arr[size]->type = makeLower(type);
-        arr[size]->level = level;
-        arr[size]->strength = strength;
         size++;
     }
 
     fin.close();
 }
 
-// frees all memory used by the array
-void freeCreatures(Creature **arr, int size)
+// points every entry in "pointers" at the matching entry in "arr"
+// only needs to run once, right after loading — this is the part
+// covered in the "how many times do you need to assign pointers"
+// question from the notes
+void buildPointerArray(Creature arr[], Creature *pointers[], int size)
 {
     for (int i = 0; i < size; i++)
-        delete arr[i];
-
-    delete[] arr;
+        pointers[i] = &arr[i];
 }
 
-// sorts the pointer array in descending order
-void sortCreatures(Creature **arr, int size, int field)
+// copies the addresses from one pointer array into another
+// (just copying pointers, not the actual creature data)
+void copyPointerArray(Creature *source[], Creature *dest[], int size)
+{
+    for (int i = 0; i < size; i++)
+        dest[i] = source[i];
+}
+
+// bubble sort on the pointer array, descending order
+// compares nameLower/typeLower instead of name/type so uppercase
+// letters don't throw off the ordering
+void sortCreatures(Creature *arr[], int size, int field)
 {
     for (int i = 0; i < size - 1; i++)
     {
         for (int j = 0; j < size - 1 - i; j++)
         {
+            // bool can just be set directly from a comparison,
+            // no need for an if/else here
             bool swapNeeded = false;
 
             if (field == SORT_BY_NAME)
-            {
-                if (arr[j]->name < arr[j + 1]->name)
-                    swapNeeded = true;
-            }
+                swapNeeded = arr[j]->nameLower < arr[j + 1]->nameLower;
             else if (field == SORT_BY_TYPE)
-            {
-                if (arr[j]->type < arr[j + 1]->type)
-                    swapNeeded = true;
-            }
+                swapNeeded = arr[j]->typeLower < arr[j + 1]->typeLower;
             else if (field == SORT_BY_LEVEL)
-            {
-                if (arr[j]->level < arr[j + 1]->level)
-                    swapNeeded = true;
-            }
+                swapNeeded = arr[j]->level < arr[j + 1]->level;
             else if (field == SORT_BY_STRENGTH)
-            {
-                if (arr[j]->strength < arr[j + 1]->strength)
-                    swapNeeded = true;
-            }
+                swapNeeded = arr[j]->strength < arr[j + 1]->strength;
 
             if (swapNeeded)
             {
@@ -180,10 +170,13 @@ void sortCreatures(Creature **arr, int size, int field)
     }
 }
 
-// sort menu 
-void sortMenu(Creature **original, int size)
+// sort submenu — lets the user pick a field to sort by or go back
+// switch falls through for the 4 sort options into the same sort call
+// going back does not force a sort, it just breaks out of the loop
+void sortMenu(Creature *original[], int size)
 {
     int choice;
+    Creature *sorted[MAX_CREATURES]; // reused for every sort attempt
 
     do
     {
@@ -202,24 +195,26 @@ void sortMenu(Creature **original, int size)
         case SORT_BY_TYPE:
         case SORT_BY_LEVEL:
         case SORT_BY_STRENGTH:
-        {
-            Creature **sorted = copyPointerArray(original, size);
+            // work on a copy so the original order stays intact
+            copyPointerArray(original, sorted, size);
             sortCreatures(sorted, size, choice);
             printCreatures(sorted, size);
-            delete[] sorted;
             break;
-        }
+
         case SORT_BACK:
+            cout << "going back to the main menu" << endl;
             break;
+
         default:
-            cout << "invalid choice." << endl;
+            cout << "invalid choice. try again" << endl;
         }
 
     } while (choice != SORT_BACK);
 }
 
-// search by partial name or type
-void searchCreatures(Creature **arr, int size)
+// searches name and type fields for a partial match
+// uses the precomputed lowercase fields so the search is case-insensitive
+void searchCreatures(Creature *arr[], int size)
 {
     string key;
     bool found = false;
@@ -232,8 +227,8 @@ void searchCreatures(Creature **arr, int size)
 
     for (int i = 0; i < size; i++)
     {
-        if (arr[i]->name.find(key) != string::npos ||
-            arr[i]->type.find(key) != string::npos)
+        if (arr[i]->nameLower.find(key) != string::npos ||
+            arr[i]->typeLower.find(key) != string::npos)
         {
             cout << left << setw(15) << arr[i]->name;
             cout << left << setw(15) << arr[i]->type;
@@ -249,13 +244,16 @@ void searchCreatures(Creature **arr, int size)
 
 int main()
 {
-    // load file
-    Creature **army = 0; 
+    // static here to avoid putting 200 creature records directly on the stack
+    static Creature army[MAX_CREATURES];
+    static Creature *pointers[MAX_CREATURES];
     int size = 0;
 
     loadCreatures("creatures.txt", army, size);
 
-    // main menu
+    // build the pointer array one single time, right after the data loads
+    buildPointerArray(army, pointers, size);
+
     int choice;
 
     do
@@ -271,18 +269,19 @@ int main()
         switch (choice)
         {
         case PRINT_LIST:
-            printCreatures(army, size);
+            printCreatures(pointers, size);
             break;
 
         case SORT_LIST:
-            sortMenu(army, size);
+            sortMenu(pointers, size);
             break;
 
         case SEARCH_LIST:
-            searchCreatures(army, size);
+            searchCreatures(pointers, size);
             break;
 
         case QUIT_APP:
+            cout << "quitting" << endl;
             break;
 
         default:
@@ -291,6 +290,5 @@ int main()
 
     } while (choice != QUIT_APP);
 
-    freeCreatures(army, size);
     return 0;
 }
