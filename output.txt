@@ -64,7 +64,7 @@ enter a name or type to search: beas
 
 name           type                level    strength
 --------------------------------------------------------
-no matching records found.
+not found
 
 main menu
 1. print items in original order
