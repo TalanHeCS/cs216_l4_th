@@ -1,0 +1,74 @@
+main menu
+1. print items in original order
+2. sort menu
+3. search
+0. quit
+choice: 1
+
+name           type                level    strength
+--------------------------------------------------------
+bob            human                  12          45
+alice          elf                    18          60
+tom            orc                    20          75
+sarah          dragon                 35         120
+jake           human                  15          50
+emma           elf                    22          68
+mike           orc                    17          58
+lucy           dragon                 40         135
+chris          human                  10          38
+anna           elf                    25          80
+
+main menu
+1. print items in original order
+2. sort menu
+3. search
+0. quit
+choice: 2
+
+sort menu
+1. sort by name
+2. sort by type
+3. sort by level
+4. sort by strength
+0. back
+choice: 1
+
+name           type                level    strength
+--------------------------------------------------------
+tom            orc                    20          75
+sarah          dragon                 35         120
+mike           orc                    17          58
+lucy           dragon                 40         135
+jake           human                  15          50
+emma           elf                    22          68
+chris          human                  10          38
+bob            human                  12          45
+anna           elf                    25          80
+alice          elf                    18          60
+
+sort menu
+1. sort by name
+2. sort by type
+3. sort by level
+4. sort by strength
+0. back
+choice: 0
+
+main menu
+1. print items in original order
+2. sort menu
+3. search
+0. quit
+choice: 3
+enter a name or type to search: beas
+
+name           type                level    strength
+--------------------------------------------------------
+no matching records found.
+
+main menu
+1. print items in original order
+2. sort menu
+3. search
+0. quit
+choice: 0
