@@ -4,19 +4,18 @@ main menu
 3. search
 0. quit
 choice: 1
-
-name           type                level    strength
+name           type             level    strength
 --------------------------------------------------------
-bob            human                  12          45
-alice          elf                    18          60
-tom            orc                    20          75
-sarah          dragon                 35         120
-jake           human                  15          50
-emma           elf                    22          68
-mike           orc                    17          58
-lucy           dragon                 40         135
-chris          human                  10          38
-anna           elf                    25          80
+Bob            Human               12          45
+Alice          Elf                 18          60
+Tom            Orc                 20          75
+Sarah          Dragon              35         120
+Jake           Human               15          50
+Emma           Elf                 22          68
+Mike           Orc                 17          58
+Lucy           Dragon              40         135
+Chris          Human               10          38
+Anna           Elf                 25          80
 
 main menu
 1. print items in original order
@@ -32,19 +31,18 @@ sort menu
 4. sort by strength
 0. back
 choice: 1
-
-name           type                level    strength
+name           type             level    strength
 --------------------------------------------------------
-tom            orc                    20          75
-sarah          dragon                 35         120
-mike           orc                    17          58
-lucy           dragon                 40         135
-jake           human                  15          50
-emma           elf                    22          68
-chris          human                  10          38
-bob            human                  12          45
-anna           elf                    25          80
-alice          elf                    18          60
+Tom            Orc                 20          75
+Sarah          Dragon              35         120
+Mike           Orc                 17          58
+Lucy           Dragon              40         135
+Jake           Human               15          50
+Emma           Elf                 22          68
+Chris          Human               10          38
+Bob            Human               12          45
+Anna           Elf                 25          80
+Alice          Elf                 18          60
 
 sort menu
 1. sort by name
@@ -53,6 +51,7 @@ sort menu
 4. sort by strength
 0. back
 choice: 0
+going back to the main menu
 
 main menu
 1. print items in original order
@@ -61,9 +60,6 @@ main menu
 0. quit
 choice: 3
 enter a name or type to search: beas
-
-name           type                level    strength
---------------------------------------------------------
 not found
 
 main menu
@@ -72,3 +68,4 @@ main menu
 3. search
 0. quit
 choice: 0
+quitting
