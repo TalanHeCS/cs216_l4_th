@@ -180,7 +180,7 @@ void sortCreatures(Creature **arr, int size, int field)
     }
 }
 
-// sort menu wrapper
+// sort menu 
 void sortMenu(Creature **original, int size)
 {
     int choice;
