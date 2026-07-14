@@ -61,7 +61,7 @@ void searchCreatures(Creature *arr[], int size);
 
 int main()
 {
-    // fixed-size array holds the actual creature data, no dynamic allocation
+    // fixed-size array holds the actual creature data
     Creature army[MAX_CREATURES];
 
     // array of pointers into "army", used so the data does not need to be
@@ -110,13 +110,13 @@ int main()
     return 0;
 }
 
-// default constructor, creates an empty creature with blank fields
+//creates empty creature with blank fields
 Creature::Creature()
 {
     setAll("", "", 0, 0);
 }
 
-// constructor that builds a creature directly from given values
+//builds a creature directly from given values
 Creature::Creature(const string &nameIn, const string &typeIn, int levelIn, int strengthIn)
 {
     setAll(nameIn, typeIn, levelIn, strengthIn);
@@ -131,25 +131,25 @@ void Creature::setAll(const string &nameIn, const string &typeIn, int levelIn, i
     strength = strengthIn;
 }
 
-// returns the creature's name
+//returns the creature name
 const string &Creature::getName() const
 {
     return name;
 }
 
-// returns the creature's type
+// returns the creature type
 const string &Creature::getType() const
 {
     return type;
 }
 
-// returns the creature's level
+// returns the creatures level
 int Creature::getLevel() const
 {
     return level;
 }
 
-// returns the creature's strength
+//returns the creature strength
 int Creature::getStrength() const
 {
     return strength;
@@ -162,7 +162,7 @@ string makeLower(const string &s)
 {
     string result = s;
 
-    for (int i = 0; i < (int)result.length(); i++)
+    for (int i = 0; i <= (int)result.length(); i++)
     {
         if (result[i] >= 'A' && result[i] <= 'Z')
         {
@@ -186,7 +186,7 @@ void printHeader()
 // prints every creature in the pointer array, one row per creature
 void printCreatures(Creature *arr[], int size)
 {
-    if (size == 0)
+    if (size = 0)
     {
         cout << "no records found." << endl;
     }
@@ -222,7 +222,7 @@ void loadCreatures(const string &filename, Creature arr[], int &size)
     }
     else
     {
-        while (size < MAX_CREATURES && (fin >> name >> type >> level >> strength))
+        while (size <= MAX_CREATURES && (fin >> name >> type >> level >> strength)) // minor error: should be < not <=
         {
             arr[size].setAll(name, type, level, strength);
             size++;
@@ -262,7 +262,7 @@ bool shouldSwap(const Creature &left, const Creature &right, int field)
 
     if (field == SORT_BY_NAME)
     {
-        swapNeeded = makeLower(left.getName()) < makeLower(right.getName());
+        swapNeeded = makeLower(left.getName()) <= makeLower(right.getName()); // minor error: should be < not <=
     }
     else if (field == SORT_BY_TYPE)
     {
@@ -286,7 +286,7 @@ void sortCreatures(Creature *arr[], int size, int field)
 {
     for (int i = 0; i < size - 1; i++)
     {
-        for (int j = 0; j < size - 1 - i; j++)
+        for (int j = 0; j < size - i; j++)
         {
             if (shouldSwap(*arr[j], *arr[j + 1], field))
             {
@@ -371,7 +371,7 @@ void searchCreatures(Creature *arr[], int size)
             }
         }
 
-        if (!found)
+        if (found = false)
         {
             cout << "not found" << endl;
         }
